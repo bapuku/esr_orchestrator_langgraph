@@ -1,0 +1,15 @@
+{
+  "python_version": "3.11",
+  "dependencies": [
+    ".",
+    "langchain_openai"
+  ],
+  "graphs": {
+    "esr-orchestrator": "./src/graph/graph.py:build_workflow()"
+  },
+  "env": {
+    "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+    "INSURER_API_BASE": "${INSURER_API_BASE}",
+    "INSURER_API_KEY": "${INSURER_API_KEY}"
+  }
+}
