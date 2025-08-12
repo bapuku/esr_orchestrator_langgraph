@@ -5,11 +5,11 @@
     "langchain_openai"
   ],
   "graphs": {
-    "esr-orchestrator": "./src/graph/graph.py:build_workflow()"
+    "esr-orchestrator": "/Users/spialpha/Library/Mobile Documents/com~apple~CloudDocs/AGENTIC WASTE ESR INSURANCE MANAGEMENT/esr_orchestrator_langgraph/src/graph/graph.py:build_workflow()"
   },
-  "env": {
-    "OPENAI_API_KEY": "${OPENAI_API_KEY}",
-    "INSURER_API_BASE": "${INSURER_API_BASE}",
-    "INSURER_API_KEY": "${INSURER_API_KEY}"
-  }
+  "env": [
+    "OPENAI_API_KEY",
+    "INSURER_API_BASE",
+    "INSURER_API_KEY"
+  ]
 }
