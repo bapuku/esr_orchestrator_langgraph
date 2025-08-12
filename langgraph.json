@@ -5,7 +5,7 @@
     "langchain_openai"
   ],
   "graphs": {
-    "esr-orchestrator": "/Users/spialpha/Library/Mobile Documents/com~apple~CloudDocs/AGENTIC WASTE ESR INSURANCE MANAGEMENT/esr_orchestrator_langgraph/src/graph/graph.py:build_workflow()"
+    "esr-orchestrator": "/Users/spialpha/Library/Mobile Documents/com~apple~CloudDocs/AGENTIC WASTE ESR INSURANCE MANAGEMENT/esr_orchestrator_langgraph/src/graph/graph.py:build_workflow"
   },
   "env": [
     "OPENAI_API_KEY",
