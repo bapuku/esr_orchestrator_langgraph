@@ -1,0 +1,3 @@
+batch_id,container_id,material,quantity_kg,location,storage_start,handler
+WB-789,C-456,Lead-Acid Batteries,240,Site-A,2025-06-28,HazOps Ltd
+WB-101,C-222,Lithium Batteries,120,Site-B,2025-07-11,Recycla Inc

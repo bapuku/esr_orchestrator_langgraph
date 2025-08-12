@@ -1,0 +1,564 @@
+# =====================================================================
+# CyclOps — Production Orchestration (ESR / Compliance / Insurance)
+# File: orchestration/cyclops.production.yaml
+# =====================================================================
+
+version: "1.0.0"
+metadata:
+  product_line:
+    core: "CyclOps Core"     # retrieval + rule logic
+    cloud: "CyclOps Cloud"   # orchestration API
+    studio: "CyclOps Studio" # prompt & pipeline authoring
+    audit: "CyclOps Audit"   # evidence mgmt & attestations
+  modules: ["Core","Cloud","Studio","Audit"]
+  agents: ["CyclOps Ingest","CyclOps KPI","CyclOps Comply","CyclOps Narrative","CyclOps Format"]
+  pillars: ["Sourcing","EcoDesign","Symbiosis","Functional","Consumption","LifeExtension","Recycling"]
+  owner: "ESR Platform Team"
+  env: "prod"
+  region: "eu-west-3" # Paris
+
+# ---------------------------------------------------------------------
+# RUNTIME & DEPLOYMENT
+# ---------------------------------------------------------------------
+runtime:
+  container_image: "ghcr.io/your-org/cyclops-esr:1.0.0"  # built from this repo (multi-arch)
+  replicas: 3
+  autoscaling:
+    min: 3
+    max: 15
+    target_cpu: 70
+    target_qps: 100
+  ingress:
+    hostnames: ["api.cyclops.esr.example.com"]
+    tls_secret: "cyclops-prod-tls"           # managed by cert-manager
+    allow_origins: ["https://studio.cyclops.esr.example.com"]
+  network:
+    vpc: "vpc-esr-prod"
+    subnets: ["subnet-a","subnet-b","subnet-c"]
+    egress:
+      allow:
+        - "sap.example.com:443"
+        - "insurer.example.com:443"
+        - "neo4j.internal:7687"
+        - "postgres.internal:5432"
+        - "objectstore.internal:443"
+  filesystems:
+    evidence_bucket: "s3://cyclops-prod-evidence"
+    evidence_cmk: "arn:aws:kms:eu-west-3:123456789012:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  feature_flags:
+    enable_langsmith_tracing: true
+    enable_run_all_mode: true
+    enable_run_in_sequence_mode: true
+    enforce_penalty_blocking: true
+
+# ---------------------------------------------------------------------
+# SECURITY & SECRETS
+# ---------------------------------------------------------------------
+security:
+  authn:
+    service_oidc:
+      issuer: "https://auth.example.com/"
+      audience: "cyclops-cloud"
+      jwks_cache_ttl_s: 600
+    api_keys:
+      header: "x-api-key"
+      policy: "deny_by_default"
+  authz:
+    roles:
+      - name: admin
+        permits: ["*"]
+      - name: analyst
+        permits: ["run:*","report:read","evidence:read","chat:*"]
+      - name: auditor
+        permits: ["audit:*","evidence:*","report:read"]
+  secrets:
+    provider: "vault" # HashiCorp Vault (alternatively: aws-secrets-manager/azure-key-vault/gcp-secret-manager)
+    mount: "kv/data/cyclops/prod"
+    keys:
+      openai_api_key: "kv/data/cyclops/prod#OPENAI_API_KEY"
+      sap_client_id:   "kv/data/cyclops/prod#SAP_CLIENT_ID"
+      sap_client_secret: "kv/data/cyclops/prod#SAP_CLIENT_SECRET"
+      sap_token_url:   "kv/data/cyclops/prod#SAP_TOKEN_URL"
+      sap_scope:       "kv/data/cyclops/prod#SAP_SCOPE"
+      insurer_api_key: "kv/data/cyclops/prod#INSURER_API_KEY"
+      neo4j_uri:       "kv/data/cyclops/prod#NEO4J_URI"
+      neo4j_user:      "kv/data/cyclops/prod#NEO4J_USER"
+      neo4j_pass:      "kv/data/cyclops/prod#NEO4J_PASS"
+      postgres_dsn:    "kv/data/cyclops/prod#POSTGRES_DSN"         # postgres://user:pass@host:5432/db?sslmode=require
+      s3_access_key:   "kv/data/cyclops/prod#S3_ACCESS_KEY"
+      s3_secret_key:   "kv/data/cyclops/prod#S3_SECRET_KEY"
+      otel_exporter_otlp_endpoint: "kv/data/cyclops/prod#OTEL_EXPORTER_OTLP_ENDPOINT"
+      langsmith_api_key: "kv/data/cyclops/prod#LANGSMITH_API_KEY"
+  privacy:
+    gdpr:
+      pii_minimization: true
+      redaction:
+        fields: ["person_name","email","phone","address","national_id"]
+        strategy: "hash_sha256"
+      data_retention_days:
+        evidence: 730
+        logs: 365
+        vector_index: 365
+      dpo_contact: "dpo@your-org.example"
+  transport_security:
+    require_tls: true
+    min_tls: "1.2"
+  signing:
+    evidence_manifest_sig: "kms:evidence_cmk"
+
+# ---------------------------------------------------------------------
+# OBSERVABILITY
+# ---------------------------------------------------------------------
+observability:
+  logging:
+    level: "INFO"
+    json: true
+    redact_keys: ["authorization","x-api-key","set-cookie","api_key","access_token"]
+    ship_to_siem:
+      enabled: true
+      endpoint: "https://siem.example.com/ingest"
+      api_key_secret: "kv/data/cyclops/prod#SIEM_API_KEY"
+  tracing:
+    otel:
+      exporter_otlp_endpoint: "${secret:otel_exporter_otlp_endpoint}"
+      service_name: "cyclops-esr"
+      sample_ratio: 0.2
+  metrics:
+    prom_endpoint: "/metrics"
+    default_hist_buckets_ms: [10,50,100,250,500,1000,2500,5000]
+  audit:
+    enabled: true
+    sink:
+      s3_bucket: "s3://cyclops-prod-audit"
+      rotate_daily: true
+    redact_policy: ["pii","secrets"]
+
+# ---------------------------------------------------------------------
+# DEPENDENCIES (PINNED)
+# ---------------------------------------------------------------------
+dependencies:
+  python:
+    - langchain==0.2.12
+    - langgraph==0.2.14
+    - fastapi==0.111.0
+    - uvicorn[standard]==0.30.1
+    - httpx==0.27.0
+    - pydantic==2.8.2
+    - python-dotenv==1.0.1
+    - networkx==3.3
+    - numpy==1.26.4
+    - pandas==2.2.2
+    - faiss-cpu==1.8.0
+    - tiktoken==0.7.0
+    - openai==1.41.1
+    - neo4j==5.23.0
+    - psycopg2-binary==2.9.9
+    - boto3==1.34.160
+    - PyYAML==6.0.2
+    - tenacity==8.5.0
+    - pyjwt[crypto]==2.8.0
+    - opentelemetry-sdk==1.26.0
+    - opentelemetry-exporter-otlp==1.26.0
+
+# ---------------------------------------------------------------------
+# MODELS
+# ---------------------------------------------------------------------
+models:
+  llm_primary:
+    provider: "openai"
+    model: "gpt-4o-mini"
+    api_key: "${secret:openai_api_key}"
+    temperature: 0.2
+    max_tokens: 2800
+    timeout_s: 40
+    rate_limit:
+      rpm: 3000
+      tpm: 2_000_000
+  llm_policy_check:
+    provider: "openai"
+    model: "gpt-4o-mini"
+    api_key: "${secret:openai_api_key}"
+    temperature: 0.0
+    max_tokens: 1200
+  embeddings:
+    provider: "openai"
+    model: "text-embedding-3-large"
+    api_key: "${secret:openai_api_key}"
+    dim: 3072
+
+# ---------------------------------------------------------------------
+# RESOURCES (ENTERPRISE + STORES)
+# ---------------------------------------------------------------------
+resources:
+  apis:
+    sap_env:
+      oauth2:
+        token_url: "${secret:sap_token_url}"
+        client_id: "${secret:sap_client_id}"
+        client_secret: "${secret:sap_client_secret}"
+        scope: "${secret:sap_scope}"
+      base_url: "https://sap.example.com/esr"
+      default_headers:
+        Accept: "application/json"
+      timeouts_s:
+        connect: 5
+        read: 15
+        total: 30
+      retry:
+        max_attempts: 3
+        backoff_ms: [200, 500, 1200]
+      circuit_breaker:
+        failure_threshold: 5
+        reset_timeout_s: 60
+    insurer:
+      base_url: "https://insurer.example.com/v1"
+      auth_header:
+        x-api-key: "${secret:insurer_api_key}"
+      timeouts_s: { connect: 5, read: 15, total: 30 }
+      retry: { max_attempts: 3, backoff_ms: [250, 750, 1500] }
+      circuit_breaker: { failure_threshold: 5, reset_timeout_s: 60 }
+  graph:
+    neo4j:
+      uri: "${secret:neo4j_uri}"
+      user: "${secret:neo4j_user}"
+      password: "${secret:neo4j_pass}"
+      encrypted: true
+  storage:
+    postgres:
+      dsn: "${secret:postgres_dsn}"
+      pool:
+        min: 5
+        max: 50
+    s3:
+      bucket: "cyclops-prod-evidence"
+      region: "eu-west-3"
+      access_key: "${secret:s3_access_key}"
+      secret_key: "${secret:s3_secret_key}"
+      sse: "aws:kms"
+      kms_key_arn: "arn:aws:kms:eu-west-3:123456789012:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  vector_index:
+    kind: "pgvector"
+    postgres_dsn: "${secret:postgres_dsn}"
+    embedding_model: "@models.embeddings"
+
+# ---------------------------------------------------------------------
+# PILLAR LICENSING & EXECUTION MODES
+# ---------------------------------------------------------------------
+licensing:
+  packs:
+    Sourcing:      { enabled: true,  license_id: "LIC-SRC-XXXX" }
+    EcoDesign:     { enabled: true,  license_id: "LIC-ECO-XXXX" }
+    Symbiosis:     { enabled: true,  license_id: "LIC-SYM-XXXX" }
+    Functional:    { enabled: true,  license_id: "LIC-FUN-XXXX" }
+    Consumption:   { enabled: true,  license_id: "LIC-CON-XXXX" }
+    LifeExtension: { enabled: true,  license_id: "LIC-LIF-XXXX" }
+    Recycling:     { enabled: true,  license_id: "LIC-REC-XXXX" }
+  marketing_copy:
+    run_all: "Run All — seven-pillar diagnostic."
+    run_seq: "Run in Sequence — domain-specific snapshot."
+
+execution_modes:
+  default_mode: "run_all"  # run_all | run_in_sequence
+  run_all:
+    parallel: true
+    pillars: "*"
+  run_in_sequence:
+    order: ["Sourcing","EcoDesign","Symbiosis","Functional","Consumption","LifeExtension","Recycling"]
+
+# ---------------------------------------------------------------------
+# PROMPTS (EN/FR + SYSTEM)
+# ---------------------------------------------------------------------
+prompts:
+  system_guardrails: |
+    You are CyclOps Narrative inside a regulated ESR environment.
+    - Always ground statements in retrieved data or graph results; cite each fact as 【src:id】.
+    - No PII. No admissions of liability. No guarantees or underwriting.
+    - Prioritize ISO 14001, GDPR, and insurer protocol references.
+  narrative_en: |
+    Write an ~800-word situational analysis in English.
+    Include: performance, incidents, risks, mitigations, next steps.
+    Cite each factual claim: 【src:...】. Embed figure captions (EN).
+    Audience: executive.
+  narrative_fr: |
+    Rédigez une analyse situationnelle (~800 mots) en français.
+    Incluez : performance, incidents, risques, mesures, prochaines étapes.
+    Citez chaque affirmation factuelle : 【src:...】. Légendes des figures (FR).
+    Public : direction.
+  json_summary: |
+    Using provided structured data, output only valid JSON:
+    { "risk_score": 0-100,
+      "major_incidents": [..],
+      "compliance_metrics": {metric:{target,actual,unit,delta}},
+      "anomalies_detected": [..] }
+  compliance_audit: |
+    Evaluate report for ISO 14001, GDPR, insurer rules:
+    - No PII; no admissions; all claims cited.
+    - Output JSON: {"penalty_score": <int>, "issues": ["..."]}
+
+# ---------------------------------------------------------------------
+# TOOLS (Agents as discrete tools; wrappers to code entrypoints)
+# ---------------------------------------------------------------------
+tools:
+  # CyclOps Ingest
+  ingest_realtime_sap:
+    type: "python"
+    entrypoint: "src.tools.ingest:sap_pull_latest"
+    config_ref: "@resources.apis.sap_env"
+  ingest_insurer_events:
+    type: "python"
+    entrypoint: "src.tools.ingest:insurer_pull_30d"
+    config_ref: "@resources.apis.insurer"
+  ingest_documents:
+    type: "python"
+    entrypoint: "src.tools.ingest:index_and_search"
+    params: { index_backend: "@resources.vector_index" }
+
+  # CyclOps KPI
+  compute_kpis:
+    type: "python"
+    entrypoint: "src.tools.kpi:compute"
+    params: { postgres_dsn: "@resources.storage.postgres.dsn" }
+
+  # CyclOps Comply
+  check_compliance:
+    type: "python"
+    entrypoint: "src.tools.compliance:score"
+    params:
+      iso_ruleset: "data/regulations/ISO14001_clauses.yaml"
+      insurer_playbook: "data/policies/insurer_rules.yaml"
+
+  # CyclOps Narrative
+  compose_narrative:
+    type: "llm"
+    model_ref: "@models.llm_primary"
+    system: "@prompts.system_guardrails"
+    prompt_selector:
+      param: "language"
+      options:
+        en: "@prompts.narrative_en"
+        fr: "@prompts.narrative_fr"
+
+  # CyclOps Format
+  generate_json_summary:
+    type: "llm"
+    model_ref: "@models.llm_primary"
+    prompt: "@prompts.json_summary"
+
+  # Visuals
+  make_chart:
+    type: "python"
+    entrypoint: "src.tools.graphics:chart_metrics"
+    params: { output: "chart.png", s3_bucket: "@resources.storage.s3.bucket" }
+  make_map:
+    type: "python"
+    entrypoint: "src.tools.graphics:map_incidents"
+    params: { output: "map.png", s3_bucket: "@resources.storage.s3.bucket" }
+  make_network:
+    type: "python"
+    entrypoint: "src.tools.graphics:network_from_kg"
+    params:
+      neo4j: "@resources.graph.neo4j"
+      output: "network.png"
+      s3_bucket: "@resources.storage.s3.bucket"
+
+  # Policy check
+  policy_check:
+    type: "llm"
+    model_ref: "@models.llm_policy_check"
+    prompt: "@prompts.compliance_audit"
+
+  # Audit & Evidence
+  evidence_write:
+    type: "python"
+    entrypoint: "src.tools.audit:write_evidence"  # writes file + signed manifest
+    params:
+      bucket: "@resources.storage.s3.bucket"
+      kms_key: "@runtime.filesystems.evidence_cmk"
+
+# ---------------------------------------------------------------------
+# GRAPH (LangGraph-compatible DAG)
+# ---------------------------------------------------------------------
+graph:
+  state_type: "src.graph.state:OrchestratorState"
+
+  nodes:
+    # 0. Entry & Language
+    input:
+      kind: "input"
+      out: ["user_message","mode","pillars_requested"]
+    detect_language:
+      kind: "python"
+      entrypoint: "src.tools.lang:detect_iso_lang"
+      in: ["user_message"]
+      out: ["language"]
+
+    # 1. Ingest (parallel)
+    ingest_parallel:
+      kind: "parallel"
+      children: ["pull_sap","pull_insurer","search_docs","query_graph"]
+    pull_sap:
+      kind: "tool"
+      tool_ref: "@tools.ingest_realtime_sap"
+      out: ["sap_metrics"]
+    pull_insurer:
+      kind: "tool"
+      tool_ref: "@tools.ingest_insurer_events"
+      out: ["insurer_events"]
+    search_docs:
+      kind: "tool"
+      tool_ref: "@tools.ingest_documents"
+      in: ["user_message"]
+      out: ["doc_snippets"]  # include source ids e.g. src:doc://...
+    query_graph:
+      kind: "python"
+      entrypoint: "src.tools.kg:context_subgraph"
+      params: { neo4j: "@resources.graph.neo4j" }
+      in: ["insurer_events"]
+      out: ["kg_subgraph","spillover_edges"]
+
+    # 2. KPI (per pillar: run_all in parallel OR run_in_sequence)
+    pillar_router:
+      kind: "python"
+      entrypoint: "src.tools.pillars:route"
+      in: ["mode","pillars_requested","sap_metrics","insurer_events"]
+      out: ["pillar_plan"]  # plan: list of pillar tasks
+    pillars:
+      kind: "map"  # fan-out over pillar_plan
+      child:
+        kind: "tool"
+        tool_ref: "@tools.compute_kpis"
+      in: ["pillar_plan"]
+      out: ["pillar_kpis[]"] # array of results
+
+    # 3. Compliance (aggregate)
+    compliance:
+      kind: "tool"
+      tool_ref: "@tools.check_compliance"
+      in: ["sap_metrics","insurer_events","pillar_kpis[]","doc_snippets"]
+      out: ["compliance_score","compliance_details"]
+
+    # 4. Narrative (+ Visuals in parallel)
+    compose:
+      kind: "tool"
+      tool_ref: "@tools.compose_narrative"
+      in: ["language","sap_metrics","insurer_events","pillar_kpis[]","kg_subgraph","doc_snippets","compliance_score","compliance_details"]
+      out: ["draft_report_md"]
+    visuals_parallel:
+      kind: "parallel"
+      children: ["v_chart","v_map","v_network"]
+    v_chart:   { kind: "tool", tool_ref: "@tools.make_chart",   in: ["pillar_kpis[]"], out: ["chart_uri"] }
+    v_map:     { kind: "tool", tool_ref: "@tools.make_map",     in: ["insurer_events"], out: ["map_uri"] }
+    v_network: { kind: "tool", tool_ref: "@tools.make_network", in: ["kg_subgraph"], out: ["network_uri"] }
+
+    # 5. Policy Check & Penalties
+    policy:
+      kind: "tool"
+      tool_ref: "@tools.policy_check"
+      in: ["draft_report_md"]
+      out: ["policy_json"] # {"penalty_score": int, "issues":[...]}
+    remediate:
+      kind: "python"
+      entrypoint: "src.tools.policy:remediate"
+      when: "policy_json.penalty_score >= 5"
+      in: ["draft_report_md","policy_json"]
+      out: ["final_report_md"]
+    passthrough_report:
+      kind: "python"
+      entrypoint: "src.tools.util:passthrough"
+      when: "policy_json.penalty_score < 5"
+      in: ["draft_report_md"]
+      out: ["final_report_md"]
+
+    # 6. JSON summary
+    json_summary:
+      kind: "tool"
+      tool_ref: "@tools.generate_json_summary"
+      in: ["sap_metrics","insurer_events","pillar_kpis[]","compliance_score","compliance_details"]
+      out: ["summary_json"]
+
+    # 7. Evidence (write artifacts + manifest)
+    evidence:
+      kind: "tool"
+      tool_ref: "@tools.evidence_write"
+      in: ["final_report_md","summary_json","chart_uri","map_uri","network_uri","policy_json"]
+      out: ["evidence_manifest_uri"]
+
+    # 8. Output assembly
+    assemble:
+      kind: "python"
+      entrypoint: "src.tools.format:markdown_with_embeds"
+      in: ["final_report_md","summary_json","chart_uri","map_uri","network_uri","evidence_manifest_uri"]
+      out: ["final_markdown"]
+
+  edges:
+    - [ "input", "detect_language" ]
+    - [ "detect_language", "ingest_parallel" ]
+    - [ "ingest_parallel", "pillar_router" ]
+    - [ "pillar_router", "pillars" ]
+    - [ "pillars", "compliance" ]
+    - [ "compliance", "compose" ]
+    - [ "compose", "visuals_parallel" ]
+    - [ "visuals_parallel", "policy" ]
+    - [ "policy", "remediate" ]
+    - [ "policy", "passthrough_report" ]
+    - [ "remediate", "json_summary" ]
+    - [ "passthrough_report", "json_summary" ]
+    - [ "json_summary", "evidence" ]
+    - [ "evidence", "assemble" ]
+
+# ---------------------------------------------------------------------
+# API (Cloud) — HTTP + WebSocket
+# ---------------------------------------------------------------------
+api:
+  framework: "fastapi"
+  http:
+    base_path: "/api"
+    routes:
+      - method: GET
+        path: "/health"
+        handler: "src.api.health:handle"
+      - method: POST
+        path: "/run"
+        auth: ["oidc","api_key"]
+        rbac: ["analyst","admin"]
+        body_schema: "schemas/run_request.json"
+        handler: "src.api.run:handle"
+      - method: GET
+        path: "/evidence/{id}"
+        auth: ["oidc"]
+        rbac: ["auditor","admin"]
+        handler: "src.api.evidence:get"
+  websocket:
+    path: "/ws"
+    auth: ["oidc","api_key"]
+    rbac: ["analyst","admin"]
+    handler: "src.api.ws:handle"
+  rate_limit:
+    ip_rpm: 600
+    token_rpm: 1200
+  timeouts_s:
+    request: 60
+  cors:
+    allow_origins: ["https://studio.cyclops.esr.example.com"]
+    allow_headers: ["authorization","content-type","x-api-key"]
+
+# ---------------------------------------------------------------------
+# TESTS (smoke & e2e)
+# ---------------------------------------------------------------------
+tests:
+  smoke:
+    - name: "lang-detect-fr"
+      input: { user_message: "Bonjour, lance un diagnostic complet.", mode: "run_all" }
+      expect: { language: "fr" }
+  e2e:
+    - name: "run-all-7-pillars"
+      input:
+        user_message: "Run All"
+        mode: "run_all"
+        pillars_requested: "*"
+      expect_contains:
+        final_markdown:
+          - "Figure 1"
+          - "Risk Network Visualization"
+          - "Compliance Summary (JSON)"
+      max_penalty: 4
