@@ -1,0 +1,31 @@
+name: Deploy LangGraph
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install langgraph-cli
+      - name: Deploy graph
+        env:
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+        run: |
+          echo "Deploying graph..."
+          # Local API server run would require langgraph.json; for now, verify import
+          python - << 'PY'
+          from src.graph.graph import build_workflow
+          wf = build_workflow()
+          assert wf is not None
+          print('Graph compiled OK')
+          PY
+          echo "Note: CLI deploy to managed LangGraph not available via current CLI; graph import verified."
