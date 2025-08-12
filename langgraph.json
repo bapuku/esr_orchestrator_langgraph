@@ -10,6 +10,7 @@
   "env": [
     "OPENAI_API_KEY",
     "INSURER_API_BASE",
-    "INSURER_API_KEY"
+    "INSURER_API_KEY",
+    "LANGSMITH_API_KEY"
   ]
 }
