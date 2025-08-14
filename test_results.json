@@ -1,0 +1,389 @@
+[
+  {
+    "scenario": "Battery Leak Incident",
+    "status": "success",
+    "result": {
+      "state": {
+        "task": "Leak detected in container C-456 containing Lead-acid batteries at Site-A. Assess environmental impact, compliance status, and prepare insurance claim documentation.",
+        "plan": {
+          "steps": [
+            "graph_query",
+            "doc_search",
+            "waste_lookup",
+            "compliance_check",
+            "risk_analysis",
+            "insurer_lookup",
+            "report_generate",
+            "audit_log"
+          ],
+          "success_criteria": [
+            "report generated",
+            "scores computed"
+          ]
+        },
+        "graph_results": {
+          "container": "C-456",
+          "materials": [
+            "Lead-Acid Batteries"
+          ]
+        },
+        "docs": {
+          "results": [
+            {
+              "score": 0.7385591268539429,
+              "text": "Environmental Policy v3.2: All hazardous spills must be recorded within 24h...\n"
+            },
+            {
+              "score": 0.7107514142990112,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            }
+          ]
+        },
+        "waste_info": {
+          "results": [
+            {
+              "batch_id": "WB-789",
+              "container_id": "C-456",
+              "material": "Lead-Acid Batteries",
+              "quantity_kg": 240,
+              "location": "Site-A",
+              "storage_start": "2025-06-28",
+              "handler": "HazOps Ltd"
+            }
+          ]
+        },
+        "compliance": {
+          "score": 0.7,
+          "details": [
+            {
+              "rule": "Spill recording within 24h",
+              "ok": true
+            },
+            {
+              "rule": "Training cert for hazardous handlers",
+              "ok": true
+            },
+            {
+              "rule": "Proper containment and labeling",
+              "ok": false
+            }
+          ]
+        },
+        "risk": {
+          "risk": "High",
+          "notes": [
+            "Leak detected",
+            "Toxic material leak"
+          ]
+        },
+        "insurer": {
+          "error": "[Errno 8] nodename nor servname provided, or not known"
+        },
+        "report": {
+          "report": "# Incident Report\n- **Summary**: Leak detected in container C-456 containing Lead-acid batteries at Site-A. Assess environmental impact, compliance status, and prepare insurance claim documentation.\n- **Container**: C-456\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Lead-Acid Batteries | Hazard: Toxic\n- **Compliance Score**: 0.7\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: MISSING\n- **Risk**: High | Notes: Leak detected, Toxic material leak\n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Immediately isolate area; escalate to emergency response per ISO 14001 Clause 8.2\n- File required insurer forms within the specified time window"
+        },
+        "done": true
+      },
+      "report": {
+        "report": "# Incident Report\n- **Summary**: Leak detected in container C-456 containing Lead-acid batteries at Site-A. Assess environmental impact, compliance status, and prepare insurance claim documentation.\n- **Container**: C-456\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Lead-Acid Batteries | Hazard: Toxic\n- **Compliance Score**: 0.7\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: MISSING\n- **Risk**: High | Notes: Leak detected, Toxic material leak\n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Immediately isolate area; escalate to emergency response per ISO 14001 Clause 8.2\n- File required insurer forms within the specified time window"
+      }
+    }
+  },
+  {
+    "scenario": "Lithium Battery Storage Assessment",
+    "status": "success",
+    "result": {
+      "state": {
+        "task": "Review storage conditions for lithium batteries in container C-222. Check compliance with fire safety regulations and assess insurance coverage adequacy.",
+        "plan": {
+          "steps": [
+            "graph_query",
+            "doc_search",
+            "waste_lookup",
+            "compliance_check",
+            "risk_analysis",
+            "insurer_lookup",
+            "report_generate",
+            "audit_log"
+          ],
+          "success_criteria": [
+            "report generated",
+            "scores computed"
+          ]
+        },
+        "graph_results": {
+          "container": "C-222.",
+          "materials": []
+        },
+        "docs": {
+          "results": [
+            {
+              "score": 0.7385591268539429,
+              "text": "Environmental Policy v3.2: All hazardous spills must be recorded within 24h...\n"
+            },
+            {
+              "score": 0.7107514142990112,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            }
+          ]
+        },
+        "waste_info": {
+          "results": []
+        },
+        "compliance": {
+          "score": 1.0,
+          "details": [
+            {
+              "rule": "Spill recording within 24h",
+              "ok": true
+            },
+            {
+              "rule": "Training cert for hazardous handlers",
+              "ok": true
+            },
+            {
+              "rule": "Proper containment and labeling",
+              "ok": true
+            }
+          ]
+        },
+        "risk": {
+          "risk": "Low",
+          "notes": []
+        },
+        "insurer": {
+          "error": "[Errno 8] nodename nor servname provided, or not known"
+        },
+        "report": {
+          "report": "# Incident Report\n- **Summary**: Review storage conditions for lithium batteries in container C-222. Check compliance with fire safety regulations and assess insurance coverage adequacy.\n- **Container**: C-222.\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Unknown | Hazard: Unknown\n- **Compliance Score**: 1.0\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: OK\n- **Risk**: Low | Notes: \n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Monitor and document remediation steps\n- File required insurer forms within the specified time window"
+        },
+        "done": true
+      },
+      "report": {
+        "report": "# Incident Report\n- **Summary**: Review storage conditions for lithium batteries in container C-222. Check compliance with fire safety regulations and assess insurance coverage adequacy.\n- **Container**: C-222.\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Unknown | Hazard: Unknown\n- **Compliance Score**: 1.0\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: OK\n- **Risk**: Low | Notes: \n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Monitor and document remediation steps\n- File required insurer forms within the specified time window"
+      }
+    }
+  },
+  {
+    "scenario": "Multi-Container Audit",
+    "status": "success",
+    "result": {
+      "state": {
+        "task": "Conduct comprehensive audit of all waste containers. Generate compliance report and identify potential insurance gaps.",
+        "plan": {
+          "steps": [
+            "graph_query",
+            "doc_search",
+            "waste_lookup",
+            "compliance_check",
+            "risk_analysis",
+            "insurer_lookup",
+            "report_generate",
+            "audit_log"
+          ],
+          "success_criteria": [
+            "report generated",
+            "scores computed"
+          ]
+        },
+        "graph_results": {
+          "container": "C-456",
+          "materials": [
+            "Lead-Acid Batteries"
+          ]
+        },
+        "docs": {
+          "results": [
+            {
+              "score": 0.7385591268539429,
+              "text": "Environmental Policy v3.2: All hazardous spills must be recorded within 24h...\n"
+            },
+            {
+              "score": 0.7107514142990112,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            }
+          ]
+        },
+        "waste_info": {
+          "results": [
+            {
+              "batch_id": "WB-789",
+              "container_id": "C-456",
+              "material": "Lead-Acid Batteries",
+              "quantity_kg": 240,
+              "location": "Site-A",
+              "storage_start": "2025-06-28",
+              "handler": "HazOps Ltd"
+            }
+          ]
+        },
+        "compliance": {
+          "score": 1.0,
+          "details": [
+            {
+              "rule": "Spill recording within 24h",
+              "ok": true
+            },
+            {
+              "rule": "Training cert for hazardous handlers",
+              "ok": true
+            },
+            {
+              "rule": "Proper containment and labeling",
+              "ok": true
+            }
+          ]
+        },
+        "risk": {
+          "risk": "Low",
+          "notes": []
+        },
+        "insurer": {
+          "error": "[Errno 8] nodename nor servname provided, or not known"
+        },
+        "report": {
+          "report": "# Incident Report\n- **Summary**: Conduct comprehensive audit of all waste containers. Generate compliance report and identify potential insurance gaps.\n- **Container**: C-456\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Lead-Acid Batteries | Hazard: Toxic\n- **Compliance Score**: 1.0\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: OK\n- **Risk**: Low | Notes: \n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Monitor and document remediation steps\n- File required insurer forms within the specified time window"
+        },
+        "done": true
+      },
+      "report": {
+        "report": "# Incident Report\n- **Summary**: Conduct comprehensive audit of all waste containers. Generate compliance report and identify potential insurance gaps.\n- **Container**: C-456\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Lead-Acid Batteries | Hazard: Toxic\n- **Compliance Score**: 1.0\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: OK\n- **Risk**: Low | Notes: \n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Monitor and document remediation steps\n- File required insurer forms within the specified time window"
+      }
+    }
+  },
+  {
+    "scenario": "Regulatory Update Impact",
+    "status": "success",
+    "result": {
+      "state": {
+        "task": "New ISO 14001 requirements published. Assess impact on current waste management practices and update compliance protocols.",
+        "plan": {
+          "steps": [
+            "graph_query",
+            "doc_search",
+            "waste_lookup",
+            "compliance_check",
+            "risk_analysis",
+            "insurer_lookup",
+            "report_generate",
+            "audit_log"
+          ],
+          "success_criteria": [
+            "report generated",
+            "scores computed"
+          ]
+        },
+        "graph_results": {
+          "container": "C-456",
+          "materials": [
+            "Lead-Acid Batteries"
+          ]
+        },
+        "docs": {
+          "results": [
+            {
+              "score": 0.7385591268539429,
+              "text": "Environmental Policy v3.2: All hazardous spills must be recorded within 24h...\n"
+            },
+            {
+              "score": 0.7107514142990112,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            },
+            {
+              "score": -3.4028234663852886e+38,
+              "text": "Clause 8.1 Operational planning and control...\nClause 8.2 Emergency preparedness and response...\n"
+            }
+          ]
+        },
+        "waste_info": {
+          "results": [
+            {
+              "batch_id": "WB-789",
+              "container_id": "C-456",
+              "material": "Lead-Acid Batteries",
+              "quantity_kg": 240,
+              "location": "Site-A",
+              "storage_start": "2025-06-28",
+              "handler": "HazOps Ltd"
+            }
+          ]
+        },
+        "compliance": {
+          "score": 1.0,
+          "details": [
+            {
+              "rule": "Spill recording within 24h",
+              "ok": true
+            },
+            {
+              "rule": "Training cert for hazardous handlers",
+              "ok": true
+            },
+            {
+              "rule": "Proper containment and labeling",
+              "ok": true
+            }
+          ]
+        },
+        "risk": {
+          "risk": "Low",
+          "notes": []
+        },
+        "insurer": {
+          "error": "[Errno 8] nodename nor servname provided, or not known"
+        },
+        "report": {
+          "report": "# Incident Report\n- **Summary**: New ISO 14001 requirements published. Assess impact on current waste management practices and update compliance protocols.\n- **Container**: C-456\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Lead-Acid Batteries | Hazard: Toxic\n- **Compliance Score**: 1.0\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: OK\n- **Risk**: Low | Notes: \n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Monitor and document remediation steps\n- File required insurer forms within the specified time window"
+        },
+        "done": true
+      },
+      "report": {
+        "report": "# Incident Report\n- **Summary**: New ISO 14001 requirements published. Assess impact on current waste management practices and update compliance protocols.\n- **Container**: C-456\n- **Time**: 2025-08-11T18:10:00\n- **Material**: Lead-Acid Batteries | Hazard: Toxic\n- **Compliance Score**: 1.0\n  - Spill recording within 24h: OK\n  - Training cert for hazardous handlers: OK\n  - Proper containment and labeling: OK\n- **Risk**: Low | Notes: \n- **Insurer Clause**: N/A\n\n## Recommended Actions\n- Monitor and document remediation steps\n- File required insurer forms within the specified time window"
+      }
+    }
+  }
+]
