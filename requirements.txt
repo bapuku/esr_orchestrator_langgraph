@@ -12,3 +12,4 @@ faiss-cpu>=1.8.0
 tiktoken>=0.7.0
 openai>=1.41.1
 langchain-openai>=0.1.25
+langchain-ibm>=0.2.5

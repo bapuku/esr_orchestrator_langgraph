@@ -20,17 +20,22 @@ export INSURER_API_KEY="${INSURER_API_KEY:-dev-local}"
 
 APP="src.app:app"
 HOST="0.0.0.0"
-PORT="8000"
+PORT="${PORT:-8000}"
 
-# Prefer venv uvicorn if available, else fallback to PATH
-PARENT_DIR="$(dirname "$REPO_ROOT")"
-VENV_UVI="$PARENT_DIR/.venv/bin/uvicorn"
-UVI_BIN="${UVI_BIN:-$VENV_UVI}"
-[[ -x "$UVI_BIN" ]] || UVI_BIN="uvicorn"
+# Prefer repo-local venv if available
+VENV_UVI="$REPO_ROOT/.venv/bin/uvicorn"
+VENV_PY="$REPO_ROOT/.venv/bin/python"
+if [[ -x "$VENV_UVI" ]]; then
+  RUN_CMD=("$VENV_UVI" "$APP" --host "$HOST" --port "$PORT")
+elif [[ -x "$VENV_PY" ]]; then
+  RUN_CMD=("$VENV_PY" -m uvicorn "$APP" --host "$HOST" --port "$PORT")
+else
+  RUN_CMD=(uvicorn "$APP" --host "$HOST" --port "$PORT")
+fi
 
 while true; do
-  echo "[launcher] starting $UVI_BIN $APP on $HOST:$PORT (cwd=$REPO_ROOT)"
-  "$UVI_BIN" "$APP" --host "$HOST" --port "$PORT"
+  echo "[launcher] starting: ${RUN_CMD[@]} (cwd=$REPO_ROOT)"
+  "${RUN_CMD[@]}"
   code=$?
   echo "[launcher] uvicorn exited with code $code; restarting in 2s..."
   sleep 2

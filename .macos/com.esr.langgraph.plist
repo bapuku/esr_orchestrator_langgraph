@@ -6,9 +6,7 @@
   <string>com.esr.langgraph</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/bin/zsh</string>
-    <string>-lc</string>
-    <string>"/Users/spialpha/Library/Mobile Documents/com~apple~CloudDocs/AGENTIC WASTE ESR INSURANCE MANAGEMENT/esr_orchestrator_langgraph/.macos/launch_langgraph.sh"</string>
+    <string>/Users/spialpha/Library/Mobile Documents/com~apple~CloudDocs/AGENTIC WASTE ESR INSURANCE MANAGEMENT/esr_orchestrator_langgraph/.macos/launch_langgraph.sh</string>
   </array>
   <key>EnvironmentVariables</key>
   <dict>
@@ -20,6 +18,8 @@
     <string>https://mock.insurer.local</string>
     <key>INSURER_API_KEY</key>
     <string>dev-local</string>
+    <key>PATH</key>
+    <string>/Users/spialpha/Library/Mobile Documents/com~apple~CloudDocs/AGENTIC WASTE ESR INSURANCE MANAGEMENT/.venv/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
   </dict>
   <key>StandardOutPath</key>
   <string>/tmp/esr_langgraph.out.log</string>

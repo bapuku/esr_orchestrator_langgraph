@@ -17,17 +17,19 @@ export INSURER_API_KEY="${INSURER_API_KEY:-dev-local}"
 PORT="${PORT:-8123}"
 CONFIG_PATH="$REPO_ROOT/langgraph.json"
 
-# Prefer venv langgraph if available, else fallback to PATH
-PARENT_DIR="$(dirname "$REPO_ROOT")"
-VENV_LG="$PARENT_DIR/.venv/bin/langgraph"
-LG_BIN="${LG_BIN:-$VENV_LG}"
-[[ -x "$LG_BIN" ]] || LG_BIN="langgraph"
-
-CMD="$LG_BIN up -c $CONFIG_PATH --port $PORT"
+VENV_LG="$REPO_ROOT/.venv/bin/langgraph"
+VENV_PY="$REPO_ROOT/.venv/bin/python"
+if [[ -x "$VENV_LG" ]]; then
+  CMD=("$VENV_LG" up -c "$CONFIG_PATH" --port "$PORT")
+elif [[ -x "$VENV_PY" ]]; then
+  CMD=("$VENV_PY" -m langgraph_cli up -c "$CONFIG_PATH" --port "$PORT")
+else
+  CMD=(langgraph up -c "$CONFIG_PATH" --port "$PORT")
+fi
 
 while true; do
-  echo "[launcher] starting $CMD (cwd=$REPO_ROOT)"
-  eval "$CMD"
+  echo "[launcher] starting: ${CMD[@]} (cwd=$REPO_ROOT)"
+  "${CMD[@]}"
   code=$?
   echo "[launcher] langgraph exited with code $code; restarting in 2s..."
   sleep 2
